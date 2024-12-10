@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eef2f7;
+            color: #333;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(90deg, #4c90f0, #2a3d66);
+            padding: 15px 20px;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar h2 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .profile-menu {
+            position: relative;
+        }
+
+        .profile-menu img {
+            cursor: pointer;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-menu img:hover {
+            transform: scale(1.1);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 50px;
+            background-color: #fff;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 15px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a i {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f3f4f7;
+        }
+
+        .profile-menu:hover .dropdown-content {
+            display: block;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2a3d66;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            border-bottom: 2px solid #2a3d66;
+            padding-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: #f8f9fc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4c90f0;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        td {
+            font-size: 14px;
+            color: #555;
+        }
+
+        td button {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        td button i {
+            font-size: 1.2em;
+        }
+
+        td button.view-btn {
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        td button.delete-btn {
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        td button.view-btn:hover {
+            background-color: #e9f9eb;
+        }
+
+        td button.delete-btn:hover {
+            background-color: #fde4e4;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            td button {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            .navbar h2 {
+                font-size: 1.3em;
+            }
+
+            table th, table td {
+                padding: 10px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <h2>Admin Panel</h2>
+        <div class="profile-menu">
+            <img src="profile.png" alt="Profile Image" id="profile-img">
+            <div class="dropdown-content">
+                <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i>Logout</a>
+                <a href="#" id="change-password-btn"><i class="fas fa-key"></i>Change Password</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Data Overview</h1>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Register Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="data-table">
+                <!-- Data will be populated here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+       const firebaseConfig = {
+  apiKey: "AIzaSyBu8SEq7mfBVb4mV9VwjiJ34PxQbnEj3MQ",
+  authDomain: "axiss-3a3ad.firebaseapp.com",
+  databaseURL: "https://axiss-3a3ad-default-rtdb.firebaseio.com",
+  projectId: "axiss-3a3ad",
+  storageBucket: "axiss-3a3ad.firebasestorage.app",
+  messagingSenderId: "196282016131",
+  appId: "1:196282016131:web:9b0668478adaf2017696b6",
+  measurementId: "G-7B50B23GCR"
+};
+        firebase.initializeApp(firebaseConfig);
+        
+
+
+        function decrypt(encryptedText, key) {
+            const bytes = CryptoJS.AES.decrypt(encryptedText, key);
+            return bytes.toString(CryptoJS.enc.Utf8);
+        }
+
+        const database = firebase.database();
+
+
+        
+
+        function fetchData() {
+            const dataTable = document.getElementById('data-table');
+            dataTable.innerHTML = '';
+
+            const dbRef = firebase.database().ref('/data');
+            dbRef.on('value', (snapshot) => {
+                const data = [];
+                snapshot.forEach((childSnapshot) => {
+                    const key = childSnapshot.key;
+                    const details = childSnapshot.val().Details;
+                    data.push({
+                        number: key,
+                        registerDate: details.RegisterDate,
+                    });
+                });
+
+                // Sort by newest date
+                data.sort((a, b) => new Date(b.registerDate) - new Date(a.registerDate));
+
+                // Populate table
+                data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${item.number}</td>
+                        <td>${item.registerDate}</td>
+                        <td>
+                            <button class="view-btn" onclick="viewData('${item.number}')"><i class="fas fa-eye"></i></button>
+                        </td>
+                    `;
+                    dataTable.appendChild(tr);
+                });
+            });
+        }
+
+        function viewData(number) {
+            window.location.href = `view.html?key=${number}`;
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const usernam = urlParams.get("username");
+            const passwd = urlParams.get("password");
+            const encryptionKey = '8hTygdnl';
+            
+            const usernaame = decrypt(usernam, encryptionKey);
+            const passwoord = decrypt(passwd, encryptionKey);
+
+            const userRef = database.ref('auth');
+            userRef.once('value', (snapshot) => {
+                const userData = snapshot.val();
+                if (userData && userData.username === usernaame && userData.password === passwoord) {
+                    fetchData();
+                } else {
+                    window.location.href = 'index.html';
+                }
+            });})
+
+    </script>
+</body>
+</html>
